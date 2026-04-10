@@ -9,8 +9,10 @@ class Lending extends Model
     protected $fillable = [
         'item_id', 
         'qty', 
-        'person_name', 
-        'description', 
+        'person_name',
+        'staff_name',
+        'description',
+        'receiver_name',
         'date', 
         'is_returned'
     ];

@@ -11,7 +11,8 @@
             </div>
         </div>
 
-        <div class="card mb-4" style="background: #fff; border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
+        <div class="card mb-4"
+            style="background: #fff; border-radius: 12px; border: none; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);">
             <div class="card-header bg-transparent border-bottom p-4">
                 <h5 class="mb-0 fw-semibold">Add new lending</h5>
             </div>
@@ -19,7 +20,7 @@
             <form action="{{ route('lending.store') }}" method="POST">
                 @csrf
                 <div class="card-body p-4">
-                    
+
                     @if ($errors->any())
                         <div class="alert alert-danger">
                             <ul class="mb-0">
@@ -29,8 +30,6 @@
                             </ul>
                         </div>
                     @endif
-
-                    {{-- Borrower Name --}}
                     <div class="row mb-4 align-items-center">
                         <label class="col-sm-2 col-form-label fw-medium">Person Name</label>
                         <div class="col-sm-10">
@@ -39,8 +38,15 @@
                                 class="form-control @error('person_name') is-invalid @enderror">
                         </div>
                     </div>
-
-                    {{-- Items Wrapper --}}
+                    <div class="row mb-4 align-items-center">
+                        <label for="staff_name" class="col-sm-2 col-form-label fw-medium">Nama Staff</label>
+                        <div class="col-sm-10">
+                            <input type="text" name="staff_name" id="staff_name"
+                                placeholder="Input staff name (Pemberi barang)"
+                                class="form-control @error('staff_name') is-invalid @enderror" 
+                                value="{{ old('staff_name') }}" required>
+                        </div>
+                    </div>
                     <div class="row mb-4">
                         <label class="col-sm-2 col-form-label fw-medium pt-2">Items</label>
                         <div class="col-sm-10">
@@ -51,18 +57,21 @@
                                             <option value="">-- Pilih Item --</option>
                                             @foreach ($items as $item)
                                                 <option value="{{ $item->id }}">
-                                                    {{ $item->item_name }} (Stock: {{ $item->total_stock - $item->total_borrowed }})
+                                                    {{ $item->item_name }} (Stock:
+                                                    {{ $item->total_stock - $item->total_borrowed }})
                                                 </option>
                                             @endforeach
                                         </select>
                                     </div>
                                     <div class="col-md-4">
-                                        <input type="number" name="total[]" class="form-control" placeholder="Qty" required min="1">
+                                        <input type="number" name="total[]" class="form-control" placeholder="Qty" required
+                                            min="1">
                                     </div>
                                 </div>
                             </div>
 
-                            <button type="button" class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 mt-1" id="add-item">
+                            <button type="button"
+                                class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 mt-1" id="add-item">
                                 <i class="mdi mdi-plus-circle-outline"></i> Add More Item
                             </button>
                         </div>
@@ -94,8 +103,8 @@
     {{-- Script Dynamic Input --}}
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        $(document).ready(function () {
-            $('#add-item').click(function () {
+        $(document).ready(function() {
+            $('#add-item').click(function() {
                 $('#items-wrapper').append(`
                     <div class="row mb-3 item-row animate__animated animate__fadeIn">
                         <div class="col-md-6">
@@ -112,7 +121,7 @@
                             <input type="number" name="total[]" class="form-control" placeholder="Qty" required min="1">
                         </div>
                         <div class="col-md-2">
-                            <button type="button" class="btn btn-danger remove-item" style="height: 38px;">
+                            <button type="button" class="btn btn-danger remove-item" style="height: 38px; width: 100%;">
                                 <i class="mdi mdi-close"></i>
                             </button>
                         </div>
@@ -120,7 +129,7 @@
                 `);
             });
 
-            $(document).on('click', '.remove-item', function () {
+            $(document).on('click', '.remove-item', function() {
                 $(this).closest('.item-row').remove();
             });
         });

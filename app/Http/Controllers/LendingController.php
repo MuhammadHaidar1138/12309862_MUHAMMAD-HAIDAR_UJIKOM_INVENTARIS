@@ -29,49 +29,49 @@ class LendingController extends Controller
 
     public function store(Request $request)
     {
-        // 1. Validasi input
         $request->validate([
             'person_name' => 'required',
             'item_id'     => 'required|array',
             'total'       => 'required|array',
+            'staff_name' => 'required|string',
         ]);
 
-        // 2. Looping data dari form
         foreach ($request->item_id as $index => $itemId) {
             $qtyRequested = $request->total[$index];
             $item = Item::find($itemId);
 
-            // 3. Cek Stok
             $availableStock = $item->total_stock - $item->total_borrowed;
 
             if ($qtyRequested > $availableStock) {
-                // Jika stok tidak cukup, langsung balikkan error
                 return back()->withErrors("Stok {$item->item_name} tidak mencukupi!")->withInput();
             }
 
-            // 4. Simpan ke tabel lendings
             Lending::create([
                 'item_id'     => $itemId,
                 'qty'         => $qtyRequested,
                 'person_name' => $request->person_name,
+                'staff_name' => $request->staff_name,
                 'description' => $request->description,
                 'date'        => now(),
                 'is_returned' => false,
             ]);
-
-            // 5. Update stok di tabel items
             $item->increment('total_borrowed', $qtyRequested);
         }
 
         return redirect()->route('lending.index')->with('success', 'Data berhasil disimpan!');
     }
 
-    public function returnItem($id)
+    public function returnItem(Request $request, $id)
     {
+        $request->validate([
+            'receiver_name' => 'required|string|max:255',
+        ]);
+
         $lending = Lending::findOrFail($id);
 
         $lending->update([
-            'is_returned' => true
+            'is_returned' => true,
+            'receiver_name' => $request->receiver_name,
         ]);
 
         return redirect()->back()->with('success', 'Barang berhasil dikembalikan!');

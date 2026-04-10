@@ -96,6 +96,8 @@
                         <th>Date</th>
                         <th>Status</th>
                         <th class="text-center">Action</th>
+                        <th>Staff (Out)</th>
+                        <th>Staff (In)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -115,14 +117,13 @@
                                 @endif
                             </td>
                             <td class="text-center">
-                                @if ($role === 'admin')
+                                @if ($role === 'staff')
                                     <div class="action-buttons justify-content-center">
 
                                         {{-- Tombol Return (Pemicu Modal) --}}
                                         @if (!$lend->is_returned)
                                             <button type="button" class="btn btn-warning btn-sm-custom"
-                                                data-bs-toggle="modal" 
-                                                data-bs-target="#returnModal"
+                                                data-bs-toggle="modal" data-bs-target="#returnModal"
                                                 data-url="{{ route('lending.return', $lend->id) }}"
                                                 data-item="{{ $lend->item->item_name }}">
                                                 <i class="mdi mdi-restore"></i> Return
@@ -134,8 +135,7 @@
                                         @endif
 
                                         {{-- Tombol Delete (Pemicu Modal) --}}
-                                        <button type="button" class="btn btn-danger btn-sm-custom"
-                                            data-bs-toggle="modal" 
+                                        <button type="button" class="btn btn-danger btn-sm-custom" data-bs-toggle="modal"
                                             data-bs-target="#deleteModal"
                                             data-url="{{ route('lending.destroy', $lend->id) }}">
                                             <i class="mdi mdi-trash-can"></i>
@@ -146,10 +146,12 @@
                                     <small class="text-muted italic">Read Only</small>
                                 @endif
                             </td>
+                            <td>{{ $lend->staff_name }}</td>
+                            <td>{{ $lend->receiver_name ?? '-' }}</td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="text-center text-muted">No lending data found.</td>
+                            <td colspan="10" class="text-center text-muted">No lending data found.</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -168,11 +170,17 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        Apakah Anda yakin barang <strong id="returnItemName"></strong> sudah dikembalikan?
+                        <p>Apakah Anda yakin barang <strong id="returnItemName"></strong> sudah dikembalikan?</p>
+
+                        <div class="mb-3">
+                            <label for="receiver_name" class="form-label">Nama Penerima Barang</label>
+                            <input type="text" name="receiver_name" id="receiver_name" class="form-control"
+                                placeholder="Masukkan nama penerima..." required>
+                        </div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-warning">Ya, Sudah Kembali</button>
+                        <button type="submit" class="btn btn-warning">Konfirmasi & Simpan</button>
                     </div>
                 </form>
             </div>
@@ -202,24 +210,24 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Logika Dinamis Modal Return
             const returnModal = document.getElementById('returnModal');
-            returnModal.addEventListener('show.bs.modal', function (event) {
+            returnModal.addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget;
                 const url = button.getAttribute('data-url');
                 const itemName = button.getAttribute('data-item');
-                
+
                 document.getElementById('returnForm').setAttribute('action', url);
                 document.getElementById('returnItemName').textContent = itemName;
             });
 
             // Logika Dinamis Modal Delete
             const deleteModal = document.getElementById('deleteModal');
-            deleteModal.addEventListener('show.bs.modal', function (event) {
+            deleteModal.addEventListener('show.bs.modal', function(event) {
                 const button = event.relatedTarget;
                 const url = button.getAttribute('data-url');
-                
+
                 document.getElementById('deleteForm').setAttribute('action', url);
             });
         });

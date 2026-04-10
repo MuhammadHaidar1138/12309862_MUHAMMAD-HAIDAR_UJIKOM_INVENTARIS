@@ -13,9 +13,11 @@ return new class extends Migration
     {
         Schema::create('lendings', function (Blueprint $table) {
             $table->id();
-            $table->foreignUuid('item_id')->constrained()->cascadeOnDelete(); // Langsung ke item
-            $table->integer('qty'); // Jumlah yang dipinjam
+            $table->foreignUuid('item_id')->constrained()->cascadeOnDelete();
+            $table->integer('qty');
             $table->string('person_name');
+            $table->string('staff_name');
+            $table->string('receiver_name')->nullable();
             $table->text('description')->nullable();
             $table->date('date')->nullable();
             $table->boolean('is_returned')->default(false);
